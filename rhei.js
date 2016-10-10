@@ -125,16 +125,16 @@ FBP.createIP = function (data) {
 FBP.dropIP = function (dropme) {
   if (Array.isArray(dropme)) {
     FBP._log('dropping array of IPs: ');
-    for (var x = 0; x < dropme.length; x++) {
-      FBP._log('dropping IP: ' + typeof(dropme[x]) + ' ' + dropme[x].id);
+    for (let drop of dropme) {
+      FBP._log('dropping IP: ' + typeof(drop) + ' ' + drop.id);
 
-      dropme[x].holdingProcess.ipCount--;
-      delete(FBP._ips[dropme[x].id]);
-      dropme[x] = null;
+      drop.holdingProcess.ipCount--;
+      delete(FBP._ips[drop.id]);
+      drop = null;
 
       FBP._events.push({
         type: 'drop_ip',
-        data: dropme[x]
+        data: drop
       });
 
     }
@@ -172,7 +172,7 @@ FBP.dropIP = function (dropme) {
  * }
  */
 FBP.network = function (network) {
-  FBP._log('Registering network: "' + network.name + '"');
+  FBP._log('Registering network: ' + network.name);
 
   network.id = Math.random().toString(16).slice(2);
 
@@ -266,8 +266,8 @@ FBP.step = function (network) {
   // every inport must have data, or an IP
   // note if node is a 'generator', and does not have input ports, this part
   // is skipped anyway, so no worries
-  for (var y = 0; y < process.inPorts.length; y++) {
-    if (process.inPorts[y].data.length === 0) {
+  for (let port of process.inPorts) {
+    if (port.data.length === 0) {
       process.suspend = true;
       break;
     }
@@ -337,9 +337,9 @@ FBP.step = function (network) {
   // note if the node is a 'sink' and has no output ports, this part is
   // skipped, which is fine
   if (process.outPorts) {
-    for (var j = 0; j < process.outPorts.length; j++) {
+    for (let port of process.outPorts) {
       // the 'output port' is just the input port of the next process
-      var inputPort = process.outPorts[j].connectedTo;
+      var inputPort = port.connectedTo;
       var output = inputPort.data;
       args.push(output);
     }
@@ -381,6 +381,7 @@ FBP.loop = function (network) {
     if (!network.running) {
       clearTimeout(id);
       FBP._log('Network "' + network.name + '" stopped. FBP._ips: ', Object.keys(FBP._ips));
+
       FBP._log('DONE');
 
       FBP._events.push({

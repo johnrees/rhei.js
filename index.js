@@ -4,6 +4,19 @@ FBP.debug(true);
  * Define the networks/connections
  */
 
+
+FBP.network({
+  name: 'canvas',
+  delay: 0,
+  processes: [
+    {name: 'drawLine', component: 'drawLine'},
+    {name: 'getElement', component: 'getElement'}
+  ],
+  connections: {
+    'getElement.element': 'drawLine.element'
+  }
+});
+
 FBP.network({
   name: 'ajax',
   delay: 200,
@@ -78,14 +91,22 @@ function testError () {
 function runGetAll () {
   var query = document.getElementById('searchString').value;
 
+  // FBP.go(
+  //   'ajax',
+  //   {
+  //     'ajax.url': 'http://localhost:3030/todos',
+  //     'ajax.method': 'GET',
+  //     'ajax.data': null,
+  //     'storeTodos.key': 'todos',
+  //     'updateDOM.target': 'todos'
+  //   }
+  // );
   FBP.go(
-    'ajax',
+    'canvas',
     {
-      'ajax.url': 'http://localhost:3030/todos',
-      'ajax.method': 'GET',
-      'ajax.data': null,
-      'storeTodos.key': 'todos',
-      'updateDOM.target': 'todos'
+      'getElement.id': query,
+      'drawLine.x': 500,
+      'drawLine.y': 500
     }
   );
 }

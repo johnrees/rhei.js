@@ -1,6 +1,37 @@
 // These "components" are just specially shaped functions
 // Note they can have multiple return callbacks
 
+FBP.component({
+  name: 'getElement',
+  inPorts: ['id'],
+  outPorts: ['element'],
+  body: function (id, output) {
+    var c = document.getElementById(id.data)
+    FBP.dropIP(id);
+    output.push(FBP.createIP(c))
+  }
+});
+
+FBP.component({
+  name: 'drawLine',
+  inPorts: ['element', 'x', 'y'],
+  body: function (element, x, y) {
+    console.log('a')
+    var c = element.data;
+    var ctx=c.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(Math.random() * c.width,0);
+    ctx.lineTo(x.data * Math.random(), c.height);
+    ctx.strokeStyle = "rgba(0,0,0,0.3)"
+
+    ctx.rect(Math.random() * c.width,Math.random() * c.height,150,100);
+    ctx.stroke();
+
+    FBP.dropIP([element, x, y]);
+  }
+});
+
+
 /**
  * Insert an element into a collection
  * @param {ip} coll - The collection
